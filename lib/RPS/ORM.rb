@@ -42,9 +42,9 @@ module RPS
       sessiontable = %Q[
         CREATE TABLE IF NOT EXISTS sessions(
           id SERIAL,
-          userid REFERENCES players(id),
-          sessionid text
-          PRIMARY KEY (id)
+          userid integer REFERENCES players(id),
+          sessionid text,
+          PRIMARY KEY ( id )
           );]
       @db.exec(sessiontable)
     end
@@ -111,9 +111,19 @@ module RPS
       @db.exec(create)
     end
 
-    def getgame(matchid)
-      select = <<-SQL
-      SELECT * FROM games
+
+    #wronggngggggggggg
+    # def getgame(matchid)
+    #   select = <<-SQL
+    #   SELECT * FROM games;
+    #   SQL
+    # end
+
+    def getmove(gameid)
+      get = <<-SQL
+      SELECT * from games WHERE id = '#{gameid}';
+      SQL
+      @db.exec(get)
     end
 
     def insertp2 (p2id, matchid)
@@ -128,11 +138,18 @@ module RPS
     def createsesh (userid)
       sessionid = Digest::SHA1.hexdigest userid
       insert = <<-SQL
-      INSERT INTO sessions (sessionid)
-      VALUES (#{sessionid})
-      RETURNING sessionid;
+      INSERT INTO sessions (sessionid, userid)
+      VALUES ('#{sessionid}', #{userid});
       SQL
       @db.exec(insert)
+      sessionid
+    end
+
+    def displaymatches (userid)
+      get= <<-SQL
+      SELECT * FROM matches WHERE p1id = #{userid} OR p2id = #{userid};
+      SQL
+      @db.exec(get)
     end
 
     #######################################################
@@ -146,23 +163,4 @@ module RPS
   end
 
 end
-
-rps = RPS.orm
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

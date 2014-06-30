@@ -16,19 +16,20 @@ module RPS
       self #?
     end
 
-    def makemove (matchid, playerid, choice)
-      #very first move, the first person to make a move becomes player 1
-      #look at games in matchid
-      player1idfrommatchtable= from SQL Match table find match with match id (SELECT * FROM matches where matchid = @matchid) AND RETURN p1id
-      #^will return 1 match
-      if pla1idfrommatchtable == playerid 
-        method to update player1move
-      else
-        method to update player2move
+    def updatemove (themove, )
+      case 
+        when getmove(@id).first["p1move"] == nil && getmove(@id).first["p2move"] == nil
+          updatemovemethodinSQL(themove)
+
+
+          @player1move == nil && @player2move == nil
+        when @player1move == nil && @player2move != nil
+          #put in the move in the database
+          play()
+        when @player1move != nil && @player2move == nil
+          #insert move in db
       end
-      if !player1move.nil? && !player2move.nil?
-        play(@player1move, @player2move, matchid)
-      end
+
     end
 
 

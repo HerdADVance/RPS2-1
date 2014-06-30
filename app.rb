@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'pry-byebug'
 require 'digest/sha1'
 require_relative 'lib/rpsrunner.rb'
 enable:sessions
@@ -9,12 +10,13 @@ get '/' do
   erb :index
 end
 
-post '/matches' do
-  @username = params[:username]
-  @display = params[:display]
-  @password = params[:password]
-  @siusername = params[:siusername]
-  @sipassword = params[:sipassword]
+get '/matches' do
+ if session[:app_session_id] #!= nil
+    theid = session[:app_session_id]
+    @userid = RPS::TS.finduser(theid)
+    @matches = RPS.orm.displaymatches(@userid)
+    #look in db to find all matches that only 
+ end
   erb :matches
 end
 
@@ -22,23 +24,26 @@ post '/signup' do
   @username = params[:username]
   @display = params[:display]
   @password = params[:password]
+  @id = params[:id]
   @password = Digest::SHA1.hexdigest @password
-  if RPS.orm.getplayerbyusername(@username).first != nil
+  if RPS.orm.getplayerbyusername(@username).first
     erb :error
   else
     RPS.orm.createplayer(@display, @username, @password)
-    RPS::SignIn.run(params)
-    erb :matches
+    hash = RPS::SignIn.run(params)
+    # binding.pry
+    session[:app_session_id] = hash[:session_id]
+    redirect to('/matches')
   end
-
 end
 
 
 post '/signin' do 
-  result = RPS::SignIn.run(params)
+  # params {"siusername"=>"ruin14", "sipassword"=>"1234"}
+  result = RPS::SignIn.signinrun(params)
   if result[:success?]
     session[:sesh_id]=result[:session_id]
-    erb :matches
+    redirect to('/matches')
   end
 end
 

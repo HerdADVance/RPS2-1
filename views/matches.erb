@@ -1,4 +1,21 @@
-<%= @sipassword %>
-<%= @username%>
-<%= @password%>
-<%= params %>
+
+Welcome, <%= @userid %>
+<%#= @username %>
+
+
+<table>
+
+<tr>
+	<th>Opponent</th>
+	<th>Score</th>
+	<th>Play</th>
+</tr>
+
+<% @matches.each do |x| %>
+  <tr><td><%= x['id'] %></td><td></td><td></td></tr>
+<% end %>
+
+
+
+</table>
+
