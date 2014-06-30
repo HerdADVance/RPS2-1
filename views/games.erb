@@ -1,0 +1,68 @@
+<html>
+<head>
+
+
+<%#= @username %>
+	<link rel="stylesheet" href="/assets/css/master.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+	<div id="moves">
+				<p id='welcome'> Welcome, <%= @username %> </p>
+			<table>
+
+			<tr>
+				<th>Your Move</th>
+				<th>Opponent's Move</th>
+			</tr>
+
+				<% row = RPS.orm.getmatchbymatchid(@matchid) 
+					p1id = row.first["p1id"]
+					p2id = row.first["p2id"]
+					p1me = nil
+					if p1id == @userid #if it is me
+						p1me = true
+					else
+						p1me = false
+					end
+
+					if p1me 
+						@games.each do |x| %>
+							<tr><td><%= x["p1move"]%></td><td><%= x["p2move"] %></td></tr>
+						<% end 
+			    else
+			    	@games.each do |x| %>
+							<tr><td><%= x["p2move"]%></td><td><%= x["p1move"] %></td></tr>
+						<% end 
+			    end %>
+			 
+			</table>
+	</div>
+<br>
+<div id='wrapper'>
+	
+	<form method='post' action="/addmove">
+		<input class='move' id='rock' type='button' value="rock">
+		<input class='move' id='paper' type='button' value="paper">
+		<input class='move' id='scissors' type='button' value="scissors">
+		<input id="playermove" type='hidden' name='playermove'>
+
+	<script>
+		$('.move').on('click', function(){
+		 var a = $(this).val();
+		 $('#playermove').val(a);
+	   $('#throw').text("You threw " + a + ". Submit move?");
+	   $('#submit').css('display', 'inline');
+		});
+	</script>
+
+	<div id="throw">Choose a move!</div>
+	<input id="submit" type="submit" value="Submit Move" />
+
+	</form>
+</div>
+
+</body>
+</html>

@@ -152,6 +152,27 @@ module RPS
       @db.exec(get)
     end
 
+    def getoppname (userid)
+      get = <<-SQL
+      SELECT * FROM players WHERE id = #{userid};
+      SQL
+      @db.exec(get)
+    end
+
+    def getgamesbymatch (matchid)
+      get =<<-SQL
+      SELECT * FROM games WHERE matchid = #{matchid};
+      SQL
+      @db.exec(get)
+    end
+
+    def getmatchbymatchid (matchid)
+      get = <<-SQL
+      SELECT * FROM matches WHERE id = #{matchid};
+      SQL
+      @db.exec(get)
+    end
+
     #######################################################
 
 

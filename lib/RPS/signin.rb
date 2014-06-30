@@ -4,7 +4,6 @@ module RPS
   class SignIn
 
     def self.run(params)
-
       userhash = RPS.orm.getplayerbyusername(params[:username])
       # binding.pry
       username = userhash.first["username"]
@@ -25,9 +24,7 @@ module RPS
     end
 
     def self.signinrun(params)
-
       userhash = RPS.orm.getplayerbyusername(params[:siusername])
-      # binding.pry
       username = userhash.first["username"]
       userid = userhash.first["id"]
       password = userhash.first["password"]

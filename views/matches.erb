@@ -1,5 +1,5 @@
 
-Welcome, <%= @userid %>
+Welcome, <%= @username %>
 <%#= @username %>
 
 
@@ -11,9 +11,24 @@ Welcome, <%= @userid %>
 	<th>Play</th>
 </tr>
 
-<% @matches.each do |x| %>
-  <tr><td><%= x['id'] %></td><td></td><td></td></tr>
-<% end %>
+<% @matches.each do |x| 
+	if x['p1id'] == @userid
+	  @oppid = x['p2id']
+	else
+		@oppid = x['p1id']
+	end
+
+  matchid = x['id']
+	oppname = RPS.orm.getoppname(@oppid).first['playername']%>
+
+  <tr><td><%= oppname %></td><td>2-1</td><td>
+  <form method="post" action="/games">
+    <input type="hidden" name="matchid" value='<%= matchid %>' />
+    <input type="submit" value="View Match" />
+  </form>
+  </td></tr>
+  
+<%end %>
 
 
 

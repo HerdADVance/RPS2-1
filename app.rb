@@ -15,6 +15,7 @@ get '/matches' do
     theid = session[:app_session_id]
     @userid = RPS::TS.finduser(theid)
     @matches = RPS.orm.displaymatches(@userid)
+    @username = RPS.orm.getplayer(@userid).first['playername']
     #look in db to find all matches that only 
  end
   erb :matches
@@ -45,6 +46,18 @@ post '/signin' do
     session[:sesh_id]=result[:session_id]
     redirect to('/matches')
   end
+end
+
+post '/games' do 
+  if session[:app_session_id] #!= nil
+    theid = session[:app_session_id]
+    @userid = RPS::TS.finduser(theid)
+    @matchid = params[:matchid]
+    @username = RPS.orm.getplayer(@userid).first['playername']
+    @games = RPS.orm.getgamesbymatch(@matchid)
+
+ end
+  erb :games
 end
 
 
