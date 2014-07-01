@@ -10,7 +10,7 @@
 
 <body>
 	<div id="moves">
-				<p id='welcome'> Welcome, <%= @username %> </p>
+				<p id='welcome'> Welcome, <%= session[:display] %> </p>
 			<table>
 
 			<tr>
@@ -29,13 +29,15 @@
 						p1me = false
 					end
 
+
+
 					if p1me 
 						@games.each do |x| %>
-							<tr><td><%= x["p1move"]%></td><td><%= x["p2move"] %></td><td><%= x["winner"]%></td></tr>
+							<tr><td><%= x["p1move"]%></td><td><%= x["p2move"] if x["p1move"] != nil %></td><td><%= x["winner"]%></td></tr>
 						<% end 
 			    else
 			    	@games.each do |x| %>
-							<tr><td><%= x["p2move"]%></td><td><%= x["p1move"] %></td><td><%= x["winner"]%></td></tr>
+							<tr><td><%= x["p2move"]%></td><td><%= x["p1move"] if x["p2move"] != nil %></td><td><%= x["winner"]%></td></tr>
 						<% end 
 			    end %>
 			 

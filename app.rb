@@ -11,8 +11,8 @@ get '/' do
 end
 
 get '/matches' do
- if session[:app_session_id] #!= nil
-    theid = session[:app_session_id]
+ if session[:sesh_id] #!= nil
+    theid = session[:sesh_id]
     @userid = RPS::TS.finduser(theid)
     @matches = RPS.orm.displaymatches(@userid)
     @username = RPS.orm.getplayer(@userid).first['playername']
@@ -23,8 +23,8 @@ end
 
 
 post '/games' do 
-  if session[:app_session_id] #!= nil
-    theid = session[:app_session_id]
+  if session[:sesh_id] #!= nil
+    theid = session[:sesh_id]
     @userid = RPS::TS.finduser(theid)
     @matchid = params[:matchid]
     @username = RPS.orm.getplayer(@userid).first['playername']
@@ -34,8 +34,8 @@ post '/games' do
 end
 
 get '/games' do 
-  if session[:app_session_id] #!= nil
-    theid = session[:app_session_id]
+  if session[:sesh_id] #!= nil
+    theid = session[:sesh_id]
     @userid = RPS::TS.finduser(theid)
     @username = RPS.orm.getplayer(@userid).first['playername']
     @matchid = params[:matchid]
@@ -55,7 +55,8 @@ post '/signup' do
   else
     RPS.orm.createplayer(@display, @username, @password)
     hash = RPS::SignIn.run(params)
-    session[:app_session_id] = hash[:session_id]
+    session[:sesh_id] = hash[:session_id]
+    #session[:display]=params[:username]
     redirect to('/matches')
   end
 end
@@ -63,9 +64,11 @@ end
 
 post '/signin' do 
   # params {"siusername"=>"ruin14", "sipassword"=>"1234"}
+  # binding.pry
   result = RPS::SignIn.signinrun(params)
   if result[:success?]
     session[:sesh_id]=result[:session_id]
+    session[:display]=params[:siusername]
     redirect to('/matches')
   end
 end
