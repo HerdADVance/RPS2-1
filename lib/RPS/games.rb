@@ -16,47 +16,69 @@ module RPS
       self #?
     end
 
-    def updatemove (themove, )
-      case 
-        when getmove(@id).first["p1move"] == nil && getmove(@id).first["p2move"] == nil
-          updatemovemethodinSQL(themove)
+    def updatemove (move, userid, matchid)
+      thegameid = RPS.orm.getmostrecentgame(matchid).first["id"]
+      p1column = RPS.orm.getmostrecentgame(matchid).first["p1move"]
+      p2column = RPS.orm.getmostrecentgame(matchid).first["p2move"]
 
+        if RPS.orm.getmatchbymatchid(matchid).first["p1id"] == userid && (p1column != 'rock' && p1column != 'paper' && p1column != 'scissors')
+          RPS.orm.p1makemove(thegameid, move)
+        elsif RPS.orm.getmatchbymatchid(matchid).first["p2id"] == userid && (p2column != 'rock' && p2column != 'paper' && p2column != 'scissors')
+          RPS.orm.p2makemove(thegameid, move)
+        else
+        end
+        updatedp1move = RPS.orm.getmostrecentgame(matchid).first["p1move"]
+        updatedp2move = RPS.orm.getmostrecentgame(matchid).first["p2move"]
 
-          @player1move == nil && @player2move == nil
-        when @player1move == nil && @player2move != nil
-          #put in the move in the database
-          play()
-        when @player1move != nil && @player2move == nil
-          #insert move in db
-      end
-
+        if (updatedp1move == 'rock' || updatedp1move == 'scissors' || updatedp1move == 'paper') && (updatedp2move == 'rock' || updatedp2move == 'scissors' || updatedp2move == 'paper')
+          play(updatedp1move, updatedp2move, matchid)
+        else
+        end
     end
 
 
     def play (move1, move2, matchid)
+      thegameid = RPS.orm.getmostrecentgame(matchid).first["id"]
+      result = nil
+      player1id = RPS.orm.getmatchbymatchid(matchid).first["p1id"]
+      player2id = RPS.orm.getmatchbymatchid(matchid).first["p2id"]
       if move1 == 'rock' && move2 == 'paper'
-        #winner is player2
-        #log into games table, and determine winner and write that in winner column FOR ALL
-        method = check to see if in a specific matchid there are three wins
-        arrayofwins = SELECT winner from games where match_id = matchid AND winner = player2
-        if arrayofwins.count == 3
-          return player2sid 
-          #log winner in match (do this for all the other ones)
+        result = player2id
       elsif move1 == 'rock' && move2 == 'scissors'
-        return :player1
+        result = player1id
       elsif move1 == 'paper' && move2 == 'rock'
-        return :player1
+        result = player1id
       elsif move1 == 'paper' && move2 == 'scissors'
-        return :player2
+        result = player2id
       elsif move1 == 'scissors' && move2 == 'rock'
-        return :player2
+        result = player2id
       elsif move1 == 'scissors' && move2 == 'paper'
-        return :player1
+        result = player1id
       else
-        return :tie
-        #clear database for that game
-        #method to clear the last game
+        result = 0
       end
+      RPS.orm.insertresult(thegameid, result)
+
+      allrows = RPS.orm.getgamesbymatch(matchid)
+      p1wins = 0
+      p2wins = 0
+      allrows.each do |x|
+        if x["winner"] == player1id
+          p1wins += 1
+        elsif x["winner"] == player2id
+          p2wins += 1
+        end
+      end
+
+      if p1wins == 3 
+        RPS.orm.setmatchwinner(matchid, player1id)
+      elsif p2wins == 3
+        RPS.orm.setmatchwinner(matchid, player2id)
+      else
+        RPS.orm.creategame(matchid)
+      end
+
+
     end
   end
 end

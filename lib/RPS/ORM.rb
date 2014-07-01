@@ -35,6 +35,7 @@ module RPS
           p1move text,
           p2move text,
           matchid integer REFERENCES matches(id),
+          winner integer,
           PRIMARY KEY ( id )
           );]
       @db.exec(gametable)
@@ -121,7 +122,7 @@ module RPS
 
     def getmove(gameid)
       get = <<-SQL
-      SELECT * from games WHERE id = '#{gameid}';
+      SELECT * from games WHERE id = #{gameid};
       SQL
       @db.exec(get)
     end
@@ -171,6 +172,50 @@ module RPS
       SELECT * FROM matches WHERE id = #{matchid};
       SQL
       @db.exec(get)
+    end
+
+    def getmostrecentgame (matchid)
+      check = <<-SQL
+      SELECT * FROM games WHERE matchid = #{matchid}
+      ORDER BY id DESC LIMIT 1;
+      SQL
+      @db.exec(check)
+    end
+
+    def p1makemove (thegameid, move)
+      update = <<-SQL
+      UPDATE games SET 
+      p1move = '#{move}'
+      WHERE id = #{thegameid};
+      SQL
+      @db.exec(update)
+    end
+
+    def p2makemove (thegameid, move)
+      update = <<-SQL
+      UPDATE games SET 
+      p2move = '#{move}'
+      WHERE id = #{thegameid};
+      SQL
+      @db.exec(update)
+    end
+
+    def insertresult (thegameid, result)
+      update =<<-SQL
+      UPDATE games SET 
+      winner = #{result}
+      WHERE id = #{thegameid};
+      SQL
+      @db.exec(update)
+    end
+
+    def setmatchwinner (matchid, winner)
+      update =<<-SQL
+      UPDATE matches SET 
+      winner = #{winner}
+      WHERE id = #{matchid};
+      SQL
+      @db.exec(update)
     end
 
     #######################################################

@@ -3,7 +3,7 @@
 
 
 <%#= @username %>
-	<link rel="stylesheet" href="/assets/css/master.css">
+<link rel="stylesheet" href="/assets/css/master.css">
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 </head>
@@ -16,6 +16,7 @@
 			<tr>
 				<th>Your Move</th>
 				<th>Opponent's Move</th>
+				<th>Winner</th>
 			</tr>
 
 				<% row = RPS.orm.getmatchbymatchid(@matchid) 
@@ -44,14 +45,16 @@
 <div id='wrapper'>
 	
 	<form method='post' action="/addmove">
-		<input class='move' id='rock' type='button' value="rock">
-		<input class='move' id='paper' type='button' value="paper">
-		<input class='move' id='scissors' type='button' value="scissors">
-		<input id="playermove" type='hidden' name='playermove'>
+		<input class='move' id='rock' type='button' throw-value="rock">
+		<input class='move' id='paper' type='button' throw-value="paper">
+		<input class='move' id='scissors' type='button' throw-value="scissors">
+		<input id="playermove" type='hidden' name='playermove' />
+		<input type='hidden' name='playerid' value='<%= @userid %>' />
+		<input type='hidden' name='matchid' value='<%= @matchid %>' />
 
 	<script>
 		$('.move').on('click', function(){
-		 var a = $(this).val();
+		 var a = $(this).attr('throw-value');
 		 $('#playermove').val(a);
 	   $('#throw').text("You threw " + a + ". Submit move?");
 	   $('#submit').css('display', 'inline');

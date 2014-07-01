@@ -21,6 +21,28 @@ get '/matches' do
   erb :matches
 end
 
+post '/games' do 
+  if session[:app_session_id] #!= nil
+    theid = session[:app_session_id]
+    @userid = RPS::TS.finduser(theid)
+    @matchid = params[:matchid]
+    @username = RPS.orm.getplayer(@userid).first['playername']
+    @games = RPS.orm.getgamesbymatch(@matchid)
+ end
+  erb :games
+end
+
+get '/games' do 
+  if session[:app_session_id] #!= nil
+    theid = session[:app_session_id]
+    @userid = RPS::TS.finduser(theid)
+    @username = RPS.orm.getplayer(@userid).first['playername']
+    @matchid = params[:matchid]
+    @games = RPS.orm.getgamesbymatch(@matchid)
+ end
+  erb :games
+end
+
 post '/signup' do 
   @username = params[:username]
   @display = params[:display]
@@ -32,7 +54,6 @@ post '/signup' do
   else
     RPS.orm.createplayer(@display, @username, @password)
     hash = RPS::SignIn.run(params)
-    # binding.pry
     session[:app_session_id] = hash[:session_id]
     redirect to('/matches')
   end
@@ -48,17 +69,17 @@ post '/signin' do
   end
 end
 
-post '/games' do 
-  if session[:app_session_id] #!= nil
-    theid = session[:app_session_id]
-    @userid = RPS::TS.finduser(theid)
-    @matchid = params[:matchid]
-    @username = RPS.orm.getplayer(@userid).first['playername']
-    @games = RPS.orm.getgamesbymatch(@matchid)
-
- end
-  erb :games
+post '/addmove' do
+  @move = params[:playermove]
+  @userid = params[:playerid]
+  @matchid = params[:matchid]
+  newpointlessobject = RPS::Games.new(@matchid)
+  newpointlessobject.updatemove(@move, @userid, @matchid)
+  # redirect to ('/games')
+  redirect "/games?matchid=#{@matchid}"
 end
+
+
 
 
 
