@@ -21,6 +21,7 @@ get '/matches' do
   erb :matches
 end
 
+
 post '/games' do 
   if session[:app_session_id] #!= nil
     theid = session[:app_session_id]
@@ -77,6 +78,12 @@ post '/addmove' do
   newpointlessobject.updatemove(@move, @userid, @matchid)
   # redirect to ('/games')
   redirect "/games?matchid=#{@matchid}"
+end
+
+post '/checkmatch' do 
+  @userid = params[:userid]
+  RPS::TS.checkmatch(@userid)
+  redirect to('/matches')
 end
 
 

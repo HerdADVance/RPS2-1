@@ -1,36 +1,77 @@
 
+<html>
+<head>
+
+
+<%#= @username %>
+<link rel="stylesheet" href="/assets/css/master.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
 Welcome, <%= @username %>
 <%#= @username %>
 
+<div id="moves">
 
-<table>
+	<table>
 
-<tr>
-	<th>Opponent</th>
-	<th>Score</th>
-	<th>Play</th>
-</tr>
+	<tr>
+		<th>Opponent</th>
+		<th>Score</th>
+		<th>Play</th>
+	</tr>
 
-<% @matches.each do |x| 
-	if x['p1id'] == @userid
-	  @oppid = x['p2id']
-	else
-		@oppid = x['p1id']
-	end
+	<% 
+	@matches.each do |x| 
 
-  matchid = x['id']
-	oppname = RPS.orm.getoppname(@oppid).first['playername']%>
+    if x['p2id'] != nil
 
-  <tr><td><%= oppname %></td><td>2-1</td><td>
-  <form method="post" action="/games">
-    <input type="hidden" name="matchid" value='<%= matchid %>' />
-    <input type="submit" value="View Match" />
-  </form>
-  </td></tr>
-  
-<%end %>
+			if x['p1id'] == @userid
+			  @oppid = x['p2id']
+			else
+				@oppid = x['p1id']
+			end
+
+		  matchid = x['id']
 
 
+			oppname = RPS.orm.getoppname(@oppid).first['playername']
+			%>
 
-</table>
+			<% 
+		      allrows = RPS.orm.getgamesbymatch(matchid)
+		      p1wins = 0
+		      p2wins = 0
+		      allrows.each do |x|
+		        if x["winner"] == @userid
+		          p1wins += 1
+		        elsif x["winner"] == @oppid
+		          p2wins += 1
+		        end
+		      end
+			%>
 
+		  <tr><td><%= oppname %></td><td><%= p1wins %> - <%= p2wins %></td><td>
+		  <form method="post" action="/games">
+		    <input type="hidden" name="matchid" value='<%= matchid %>' />
+		    <input type="submit" value="View Match" />
+		  </form>
+		  </td></tr>
+	  <%else%>
+	      <tr><td colspan='3'>Waiting on opponent</td></tr>
+     <%end
+	  end %>
+	</table>
+
+	<form method="post" action="/checkmatch">
+		<input type="hidden" name="userid" value='<%= @userid %>' />
+		<input type="submit" value="Start New Match" />
+	</form>
+</div>
+
+
+</body>
+</html>

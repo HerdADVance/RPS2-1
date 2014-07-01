@@ -23,7 +23,8 @@ module RPS
      def fillmatch (p2id, matchid)
         @p2id = p2id
         RPS.orm.insertp2(@p2id, matchid)
-        RPS::Games.new(matchid) 
+        a = RPS::Games.new(matchid) 
+        a.save!
      end
 
 

@@ -31,11 +31,11 @@
 
 					if p1me 
 						@games.each do |x| %>
-							<tr><td><%= x["p1move"]%></td><td><%= x["p2move"] %></td></tr>
+							<tr><td><%= x["p1move"]%></td><td><%= x["p2move"] %></td><td><%= x["winner"]%></td></tr>
 						<% end 
 			    else
 			    	@games.each do |x| %>
-							<tr><td><%= x["p2move"]%></td><td><%= x["p1move"] %></td></tr>
+							<tr><td><%= x["p2move"]%></td><td><%= x["p1move"] %></td><td><%= x["winner"]%></td></tr>
 						<% end 
 			    end %>
 			 
